@@ -3,12 +3,11 @@ class Cafe {
         val cup = Coffee("Wiener Melange", 3.5)
         return Pair(cup, Charge(cc, cup.price))
     }
-}
 
-class Payments {
-
-    fun charge(charge: Charge) {
-        TODO("charge!")
+    fun buyCoffees(cc: CreditCard, n: Int): Pair<List<Coffee>, Charge> {
+        val purchases: List<Pair<Coffee, Charge>> = List(n) { buyCoffee(cc) }
+        val (coffees, charges) = purchases.unzip()
+        return Pair(coffees, charges.reduce { c1, c2 -> c1.combine(c2) })
     }
 }
 
@@ -18,6 +17,14 @@ data class Charge(val cc: CreditCard, val amount: Double) {
         if (cc == other.cc)
             Charge(cc, amount + other.amount)
         else throw Exception("Cannot combine charges to different cards")
+
+}
+
+class Payments {
+
+    fun charge(charge: Charge) {
+        TODO("charge with 1 fee only!")
+    }
 }
 
 data class CreditCard(val number: String)
@@ -30,8 +37,8 @@ val cafe = Cafe()
 val creditCard = CreditCard("1234567890")
 
 fun test() {
-    val (coffee, charge) = cafe.buyCoffee(creditCard)
-    println("$coffee $charge")
+    val (coffees, charge) = cafe.buyCoffees(creditCard, 3)
+    println("$charge")
 }
 
 test()
